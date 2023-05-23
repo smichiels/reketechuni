@@ -2,6 +2,7 @@ import logging
 
 from sqlalchemy import delete, inspect, text
 
+from constants import SCORE_RANKS_LIST, SCORE_RATING_FORMULA_LIST
 from models import (
     ReketechuniRecords,
     ReketechuniRecent10,
@@ -13,34 +14,10 @@ logger = logging.getLogger("root")
 
 
 def get_rank_str(rating):
-    if rating < 500000:
-        return "D"
-    elif rating < 600000:
-        return "C"
-    elif rating < 700000:
-        return "B"
-    elif rating < 800000:
-        return "BB"
-    elif rating < 900000:
-        return "BBB"
-    elif rating < 925000:
-        return "A"
-    elif rating < 950000:
-        return "AA"
-    elif rating < 975000:
-        return "AAA"
-    elif rating < 990000:
-        return "S"
-    elif rating < 1000000:
-        return "S+"
-    elif rating < 1005000:
-        return "SS"
-    elif rating < 1007500:
-        return "SS+"
-    elif rating < 1009000:
-        return "SSS"
-    else:
-        return "SSS+"
+    for score, rank in SCORE_RANKS_LIST:
+        if rating < score:
+            return rank
+    return "SSS+"
 
 
 def get_level_str(level_decimal):
@@ -50,26 +27,12 @@ def get_level_str(level_decimal):
     return i
 
 
-def calculate_rating(score, constant):
-    if score >= 1009000:
-        rating = constant + 2.15
-    elif score >= 1007500:
-        rating = constant + 2 + 0.15 * (score - 1007500) / 1500
-    elif score >= 1005000:
-        rating = constant + 1.5 + 0.5 * (score - 1005000) / 2500
-    elif score >= 1000000:
-        rating = constant + 1 + 0.5 * (score - 1000000) / 5000
-    elif score >= 975000:
-        rating = constant + 1 * (score - 975000) / 25000
-    elif score >= 925000:
-        rating = constant - 3 * (975000 - score) / 50000
-    elif score >= 900000:
-        rating = constant - 3 - 2 * (925000 - score) / 25000
-    elif score >= 800000:
-        rating = ((constant - 5) * (900000 - score) / 100000) * 0.5
-    else:
-        rating = 0
-    return round(rating, 2)
+def calculate_rating(constant, score_max):
+    for score, formula in SCORE_RATING_FORMULA_LIST:
+        if score_max >= score:
+            rating = formula(constant, score_max)
+            return round(rating, 2)
+    return 0
 
 
 def wipe_tables(session):
@@ -87,9 +50,7 @@ def check_if_tables_exist(engine, session):
         ReketechuniProfileHistoric,
     ]:
         if not inspect(engine).has_table(table.__tablename__):
-            logger.warning(
-                f"Table {table} was not found in db!! Checking and creating all missing tables... "
-            )
+            logger.warning(f"Table {table} was not found in db!! Checking and creating all missing tables... ")
             with open("create_tables.sql", "r") as f:
                 for stmt in f.read().split(";"):
                     session.execute(text(stmt))
