@@ -1,4 +1,5 @@
 import logging.config
+from os import path
 
 import pandas as pd
 from sqlalchemy import create_engine, text
@@ -18,7 +19,8 @@ from transformer import (
 )
 from utils import check_if_tables_exist
 
-logging.config.fileConfig("logging.ini")
+log_file_path = path.join(path.dirname(path.abspath(__file__)), "logging.ini")
+logging.config.fileConfig(log_file_path)
 logger = logging.getLogger("root")
 
 
