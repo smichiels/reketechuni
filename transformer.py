@@ -11,7 +11,7 @@ def transform_into_reketechuni_records(df):
     df["rank"] = df["score_max"].apply(get_rank_str)
     df["constant"] = (df["level"].astype(str) + "." + df["level_decimal"].astype(str)).astype(float)
     df["level"] = df["constant"].apply(get_level_str)
-    df["rating"] = df[["score_max", "constant"]].apply(lambda x: calculate_rating(*x), axis=1)
+    df["rating"] = df[["constant", "score_max"]].apply(lambda x: calculate_rating(*x), axis=1)
     df.drop(df[df["diff"] == "WORLD'S END"].index, inplace=True)
     df.drop(columns=["level_decimal"], inplace=True)
     return df
@@ -43,7 +43,7 @@ def transform_into_reketechuni_profile(values, df_reketechuni_records, df_rekete
     values["best_30_lowest"] = df_records.tail(1)["rating"].values
     df_profile = pd.DataFrame(values)
     profile_historic_entry = {
-        "rating": values["calculated_rating"][0],
+        "rating": values["ingame_rating"][0],
         "avg_best_30": values["avg_best_30"][0],
         "avg_rcnt_10": values["avg_rcnt_10"][0],
         "date": date.today(),
