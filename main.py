@@ -59,15 +59,11 @@ if __name__ == "__main__":
         # transform data
         logging.info("Transforming chusan data into reketechuni format...")
         df_reketechuni_records = transform_into_reketechuni_records(df_chusan_records)
-        df_reketechuni_recent_10 = transform_into_reketechuni_recent_10(
-            df_chusan_recent_10, df_reketechuni_records
-        )
+        df_reketechuni_recent_10 = transform_into_reketechuni_recent_10(df_chusan_recent_10, df_reketechuni_records)
         (
             df_reketechuni_profile,
             profile_historic_entry,
-        ) = transform_into_reketechuni_profile(
-            chusan_profile, df_reketechuni_records, df_reketechuni_recent_10
-        )
+        ) = transform_into_reketechuni_profile(chusan_profile, df_reketechuni_records, df_reketechuni_recent_10)
 
         # load data
         logging.info("Saving reketechuni info into database...")
