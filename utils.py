@@ -28,11 +28,19 @@ def get_level_str(level_decimal):
 
 
 def calculate_rating(constant, score_max):
-    for score, formula in SCORE_RATING_FORMULA_LIST:
+    for score, formula, _ in SCORE_RATING_FORMULA_LIST:
         if score_max >= score:
             rating = formula(constant, score_max)
             return round(rating, 2)
     return 0
+
+
+def get_score_to_reach_rating(rating_to_reach, constant):
+    for s, f1, f2 in SCORE_RATING_FORMULA_LIST[1:]:
+        s = s - 1
+        if f1(constant, s) <= rating_to_reach:
+            return int(f2(constant, rating_to_reach))
+    return 1009000
 
 
 def wipe_tables(session):

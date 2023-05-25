@@ -16,6 +16,7 @@ from transformer import (
     transform_into_reketechuni_records,
     transform_into_reketechuni_profile,
     transform_into_reketechuni_recent_10,
+    calculate_recomendations,
 )
 from utils import check_if_tables_exist
 
@@ -47,6 +48,7 @@ def get_chusan_profile(db_session):
 
 
 if __name__ == "__main__":
+    logger.info("Starting reketechuni parsing process...")
     engine = create_engine(f"sqlite:///{DB_PATH}")
     with Session(engine) as session:
         # check if any reketechuni tables do not exist
@@ -67,8 +69,13 @@ if __name__ == "__main__":
             profile_historic_entry,
         ) = transform_into_reketechuni_profile(chusan_profile, df_reketechuni_records, df_reketechuni_recent_10)
 
+        # now finding recommended songs for increasing rating
+        logging.info("Calculating songs to increase rating...")
+        df_reketechuni_recommendations = calculate_recomendations(df_reketechuni_records)
+
         # load data
         logging.info("Saving reketechuni info into database...")
+        # TODO: SAVE RECOMMENDATIONS INFO INTO DB
         load_data(
             session,
             engine,

@@ -25,14 +25,42 @@ SCORE_RANKS_LIST = [
 
 
 SCORE_RATING_FORMULA_LIST = [
-    (1009000, lambda constant, score: constant + 2.15),
-    (1007500, lambda constant, score: constant + 2 + 0.15 * (score - 1007500) / 1500),
-    (1005000, lambda constant, score: constant + 1.5 + 0.5 * (score - 1005000) / 2500),
-    (1000000, lambda constant, score: constant + 1 + 0.5 * (score - 1000000) / 5000),
-    (975000, lambda constant, score: constant + (score - 975000) / 25000),
-    (925000, lambda constant, score: constant - 3 * (975000 - score) / 50000),
-    (900000, lambda constant, score: constant - 3 - 2 * (925000 - score) / 25000),
-    (800000, lambda constant, score: ((constant - 5) * (900000 - score) / 100000) * 0.5),
+    (1009000, lambda constant, score: constant + 2.15, None),
+    (
+        1007500,
+        lambda constant, score: constant + 2 + 0.15 * (score - 1007500) / 1500,
+        lambda constant, rating: ((rating - constant - 2) * 1500 / 0.15) + 1007500,
+    ),
+    (
+        1005000,
+        lambda constant, score: constant + 1.5 + 0.5 * (score - 1005000) / 2500,
+        lambda constant, rating: ((rating - constant - 1.5) * 2500 / 0.5) + 1005000,
+    ),
+    (
+        1000000,
+        lambda constant, score: constant + 1 + 0.5 * (score - 1000000) / 5000,
+        lambda constant, rating: ((rating - constant - 1) * 5000 / 0.5) + 1000000,
+    ),
+    (
+        975000,
+        lambda constant, score: constant + (score - 975000) / 25000,
+        lambda constant, rating: ((rating - constant) * 25000) + 975000,
+    ),
+    (
+        925000,
+        lambda constant, score: constant - 3 * (975000 - score) / 50000,
+        lambda constant, rating: ((rating - constant) * 50000 / 3) + 975000,
+    ),
+    (
+        900000,
+        lambda constant, score: constant - 3 - 2 * (925000 - score) / 25000,
+        lambda constant, rating: ((rating - constant + 3) * 25000 / 2) + 925000,
+    ),
+    (
+        800000,
+        lambda constant, score: (constant - 5) * (900000 - score) / 100000 * 0.5,
+        lambda constant, rating: (200000 * rating / (5 - constant)) + 900000,
+    ),
 ]
 
 

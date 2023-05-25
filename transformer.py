@@ -3,7 +3,7 @@ from datetime import date
 import pandas as pd
 
 from constants import DIFFICULTY_LEVEL_DICT
-from utils import get_rank_str, get_level_str, calculate_rating
+from utils import get_rank_str, get_level_str, calculate_rating, get_score_to_reach_rating
 
 
 def transform_into_reketechuni_records(df):
@@ -49,3 +49,17 @@ def transform_into_reketechuni_profile(values, df_reketechuni_records, df_rekete
         "date": date.today(),
     }
     return df_profile, profile_historic_entry
+
+
+def calculate_recomendations(df_reketechuni_records):
+    df_reketechuni_records = df_reketechuni_records.sort_values(by="rating", ascending=False)
+    rating_to_reach = df_reketechuni_records.iloc[:30, :].tail(1)["rating"].values[0] + 0.01
+    df_candidates = df_reketechuni_records.iloc[30:, :].copy()
+    df_candidates["max_achievable_rating"] = df_candidates["constant"].apply(lambda x: calculate_rating(x, 1010000))
+    df_candidates.drop(df_candidates[df_candidates["max_achievable_rating"] < rating_to_reach].index, inplace=True)
+    df_candidates["score_to_reach"] = df_candidates["constant"].apply(
+        lambda constant: get_score_to_reach_rating(rating_to_reach, constant)
+    )
+    df_candidates["score_delta"] = df_candidates.apply(lambda x: x["score_to_reach"] - x["score_max"], axis=1)
+    df_candidates.drop(columns=["max_achievable_rating"], inplace=True)
+    return df_candidates.sort_values(by="score_delta").head(20)
