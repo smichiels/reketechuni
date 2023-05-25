@@ -36,9 +36,18 @@ def calculate_rating(constant, score_max):
 
 
 def get_score_to_reach_rating(rating_to_reach, constant):
-    for s, f1, f2 in SCORE_RATING_FORMULA_LIST[1:]:
-        s = s - 1
-        if f1(constant, s) <= rating_to_reach:
+    # we skip SSS level starting from 1
+    for i in range(1, len(SCORE_RATING_FORMULA_LIST)):
+        (_, f, _) = SCORE_RATING_FORMULA_LIST[i]
+        # we get the max score achievable for that interval and formula (which is prev. interval score - 1)
+        max_score_for_interval = SCORE_RATING_FORMULA_LIST[i-1][0] - 1
+        # and then calculate the max achievable rating for that interval
+        max_achievable_rating_for_interval = f(constant, max_score_for_interval)
+        # now we compare that rating with the expected one, to see if we got "too low"
+        if 0 < max_achievable_rating_for_interval <= rating_to_reach:
+            # if we cannot achieve that expected rating anymore it means the interval we were looking for was one before
+            f2 = SCORE_RATING_FORMULA_LIST[i-1][2]
+            # get the inverse formula for that interval and calculate the score we need
             return int(f2(constant, rating_to_reach))
     return 1009000
 
