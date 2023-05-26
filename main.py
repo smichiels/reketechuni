@@ -51,9 +51,6 @@ if __name__ == "__main__":
     logger.info("Starting reketechuni parsing process...")
     engine = create_engine(f"sqlite:///{DB_PATH}")
     with Session(engine) as session:
-        # check if any reketechuni tables do not exist
-        check_if_tables_exist(engine, session)
-
         # get data
         logging.info("Getting chusan data...")
         df_chusan_records = get_chusan_records(engine)
@@ -75,7 +72,8 @@ if __name__ == "__main__":
 
         # load data
         logging.info("Saving reketechuni info into database...")
-        # TODO: SAVE RECOMMENDATIONS INFO INTO DB
+        # check if any reketechuni tables do not exist
+        check_if_tables_exist(engine, session)
         load_data(
             session,
             engine,
@@ -83,5 +81,6 @@ if __name__ == "__main__":
             df_reketechuni_recent_10,
             df_reketechuni_profile,
             profile_historic_entry,
+            df_reketechuni_recommendations,
         )
         logging.info("Done!! \o/")

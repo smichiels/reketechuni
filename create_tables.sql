@@ -45,3 +45,17 @@ CREATE TABLE IF NOT EXISTS reketechuni_profile_historic (
     date DATE NOT NULL,
     PRIMARY KEY (rating, date)
 );
+CREATE TABLE IF NOT EXISTS reketechuni_recommendations (
+    music_id INTEGER NOT NULL,
+    name VARCHAR(255),
+    sort_name VARCHAR(255),
+    diff VARCHAR NOT NULL,
+    level VARCHAR NOT NULL,
+    score_max INTEGER NOT NULL,
+    score_to_reach INTEGER NOT NULL,
+    score_delta INTEGER NOT NULL,
+    rank VARCHAR NOT NULL,
+    constant FLOAT NOT NULL,
+    rating FLOAT NOT NULL,
+    PRIMARY KEY (music_id, score_max)
+);

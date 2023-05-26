@@ -61,5 +61,5 @@ def calculate_recomendations(df_reketechuni_records):
         lambda constant: get_score_to_reach_rating(rating_to_reach, constant)
     )
     df_candidates["score_delta"] = df_candidates.apply(lambda x: x["score_to_reach"] - x["score_max"], axis=1)
-    df_candidates.drop(columns=["max_achievable_rating"], inplace=True)
+    df_candidates.drop(columns=["max_achievable_rating", "is_full_combo", "is_all_justice"], inplace=True)
     return df_candidates.sort_values(by="score_delta").head(20)

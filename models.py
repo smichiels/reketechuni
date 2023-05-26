@@ -71,3 +71,21 @@ class ReketechuniProfileHistoric(Base):
     date = Column(Date, primary_key=True)
 
     __table_args__ = (PrimaryKeyConstraint("rating", "date"),)
+
+
+class ReketechuniRecommendations(Base):
+    __tablename__ = "reketechuni_recommendations"
+
+    music_id = Column(Integer, primary_key=True)
+    name = Column(String(255))
+    sort_name = Column(String(255))
+    diff = Column(String, nullable=False)
+    level = Column(String, nullable=False)
+    score_max = Column(Integer, primary_key=True)
+    score_to_reach = Column(Integer, nullable=False)
+    score_delta = Column(Integer, nullable=False)
+    rank = Column(String, nullable=False)
+    constant = Column(Float, nullable=False)
+    rating = Column(Float, nullable=False)
+
+    __table_args__ = (PrimaryKeyConstraint("music_id", "score_max"),)

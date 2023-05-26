@@ -6,17 +6,23 @@ from models import (
     ReketechuniProfile,
     ReketechuniProfileHistoric,
     ReketechuniRecords,
+    ReketechuniRecommendations,
 )
 from utils import wipe_tables
 
 logger = logging.getLogger("root")
 
 
-def load_data(session, engine, df_records, df_recent_10, df_profile, profile_historic_entry):
+def load_data(
+    session, engine, df_records, df_recent_10, df_profile, profile_historic_entry, df_reketechuni_recommendations
+):
     wipe_tables(session)
     df_records.to_sql(ReketechuniRecords.__tablename__, engine, if_exists="append", index=False)
     df_recent_10.to_sql(ReketechuniRecent10.__tablename__, engine, if_exists="append", index=False)
     df_profile.to_sql(ReketechuniProfile.__tablename__, engine, if_exists="append", index=False)
+    df_reketechuni_recommendations.to_sql(
+        ReketechuniRecommendations.__tablename__, engine, if_exists="append", index=False
+    )
     row = session.query(ReketechuniProfileHistoric).filter_by(date=date.today()).first()
     if row is None:
         logger.info("No profile history entry for today. Creating...")
