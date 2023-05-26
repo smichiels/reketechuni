@@ -22,8 +22,6 @@ CREATE TABLE IF NOT EXISTS reketechuni_recent_10 (
     rank VARCHAR NOT NULL,
     constant FLOAT NOT NULL,
     rating FLOAT NOT NULL,
-    is_all_justice BOOLEAN NOT NULL,
-    is_full_combo BOOLEAN NOT NULL,
     PRIMARY KEY (music_id, score_max)
 );
 CREATE TABLE IF NOT EXISTS reketechuni_profile (

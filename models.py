@@ -42,8 +42,6 @@ class ReketechuniRecent10(Base):
     rank = Column(String, nullable=False)
     constant = Column(Float, nullable=False)
     rating = Column(Float, nullable=False)
-    is_all_justice = Column(Boolean, nullable=False)
-    is_full_combo = Column(Boolean, nullable=False)
 
     __table_args__ = (PrimaryKeyConstraint("music_id", "score_max"),)
 

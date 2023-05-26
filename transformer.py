@@ -23,12 +23,14 @@ def transform_into_reketechuni_recent_10(df, df_reketechuni_records):
     df.drop(columns=["level"], inplace=True)
     df = pd.merge(
         df,
-        df_reketechuni_records.drop(columns=["score_max"]),
+        df_reketechuni_records[["music_id", "diff", "name", "sort_name", "level", "constant"]],
         how="left",
         left_on=["music_id", "diff"],
         right_on=["music_id", "diff"],
     )
     df["score_max"] = df["score_max"].astype(int)
+    df["rank"] = df["score_max"].apply(get_rank_str)
+    df["rating"] = df[["constant", "score_max"]].apply(lambda x: calculate_rating(*x), axis=1)
     return df.sort_values(by="rating", ascending=False).head(10)
 
 
