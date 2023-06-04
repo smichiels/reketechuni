@@ -63,6 +63,9 @@ SCORE_RATING_FORMULA_LIST = [
     ),
 ]
 
+REKETECHUNI_RECORDS_QUERY = """SELECT music_id, diff, updated FROM reketechuni_records ORDER BY music_id ASC;"""
+REKETECHUNI_RECORDS_COLUMNS = ["music_id", "diff"]
+
 
 GET_PROFILE_DATA = """SELECT user_name, level, player_rating, highest_rating  FROM chusan_user_data where id = 1;"""
 

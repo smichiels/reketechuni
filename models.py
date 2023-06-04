@@ -26,6 +26,7 @@ class ReketechuniRecords(Base):
     rating = Column(Float, nullable=False)
     is_all_justice = Column(Boolean, nullable=False)
     is_full_combo = Column(Boolean, nullable=False)
+    updated = Column(Date)
 
     __table_args__ = (PrimaryKeyConstraint("music_id", "score_max"),)
 

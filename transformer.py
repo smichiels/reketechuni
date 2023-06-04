@@ -2,11 +2,11 @@ from datetime import date
 
 import pandas as pd
 
-from constants import DIFFICULTY_LEVEL_DICT
+from constants import DIFFICULTY_LEVEL_DICT, REKETECHUNI_RECORDS_COLUMNS
 from utils import get_rank_str, get_level_str, calculate_rating, get_score_to_reach_rating
 
 
-def transform_into_reketechuni_records(df):
+def transform_into_reketechuni_records(df, df_existing_records):
     df["diff"] = df["diff"].apply(DIFFICULTY_LEVEL_DICT.get)
     df["rank"] = df["score_max"].apply(get_rank_str)
     df["constant"] = (df["level"].astype(str) + "." + df["level_decimal"].astype(str)).astype(float)
@@ -14,6 +14,14 @@ def transform_into_reketechuni_records(df):
     df["rating"] = df[["constant", "score_max"]].apply(lambda x: calculate_rating(*x), axis=1)
     df.drop(df[df["diff"] == "WORLD'S END"].index, inplace=True)
     df.drop(columns=["level_decimal"], inplace=True)
+    updated_songs_indexes = set(
+        pd.concat([df[REKETECHUNI_RECORDS_COLUMNS], df_existing_records[REKETECHUNI_RECORDS_COLUMNS]])
+        .drop_duplicates(keep=False)
+        .index
+    )
+    df = pd.merge(df, df_existing_records, how="left", on=["music_id", "diff"])
+    df.loc[df.index.isin(updated_songs_indexes), "updated"] = date.today()
+    df["updated"] = [x.date() for x in pd.to_datetime(df["updated"])]
     return df
 
 
@@ -54,7 +62,7 @@ def transform_into_reketechuni_profile(values, df_reketechuni_records, df_rekete
 
 
 def calculate_recomendations(df_reketechuni_records):
-    df_reketechuni_records = df_reketechuni_records.sort_values(by="rating", ascending=False)
+    df_reketechuni_records = df_reketechuni_records.drop(columns=["updated"]).sort_values(by="rating", ascending=False)
     rating_to_reach = df_reketechuni_records.iloc[:30, :].tail(1)["rating"].values[0] + 0.01
     df_candidates = df_reketechuni_records.iloc[30:, :].copy()
     df_candidates["max_achievable_rating"] = df_candidates["constant"].apply(lambda x: calculate_rating(x, 1010000))

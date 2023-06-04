@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS reketechuni_records (
     rating FLOAT NOT NULL,
     is_all_justice BOOLEAN NOT NULL,
     is_full_combo BOOLEAN NOT NULL,
+    updated DATE,
     PRIMARY KEY (music_id, score_max)
 );
 CREATE TABLE IF NOT EXISTS reketechuni_recent_10 (
@@ -57,3 +58,9 @@ CREATE TABLE IF NOT EXISTS reketechuni_recommendations (
     rating FLOAT NOT NULL,
     PRIMARY KEY (music_id, score_max)
 );
+CREATE VIEW reketechuni_best_30 AS
+    SELECT music_id, name, sort_name, diff, level, score_max, rank, constant, rating
+    FROM reketechuni_records
+    ORDER BY rating DESC
+    LIMIT 30
+;

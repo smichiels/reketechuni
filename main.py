@@ -10,6 +10,7 @@ from constants import (
     GET_RECENT_SONGS,
     GET_RECORDS,
     DB_PATH,
+    REKETECHUNI_RECORDS_QUERY,
 )
 from loader import load_data
 from transformer import (
@@ -36,6 +37,10 @@ def get_chusan_best_recent_10(db_session):
     return df
 
 
+def get_reketechuni_existing_records(db_engine):
+    return pd.read_sql(REKETECHUNI_RECORDS_QUERY, db_engine)
+
+
 def get_chusan_profile(db_session):
     values = [x for x in db_session.execute(text(GET_PROFILE_DATA))][0]
     values_dict = {
@@ -56,10 +61,11 @@ if __name__ == "__main__":
         df_chusan_records = get_chusan_records(engine)
         df_chusan_recent_10 = get_chusan_best_recent_10(session)
         chusan_profile = get_chusan_profile(session)
+        existing_reketechuni_records = get_reketechuni_existing_records(engine)
 
         # transform data
         logging.info("Transforming chusan data into reketechuni format...")
-        df_reketechuni_records = transform_into_reketechuni_records(df_chusan_records)
+        df_reketechuni_records = transform_into_reketechuni_records(df_chusan_records, existing_reketechuni_records)
         df_reketechuni_recent_10 = transform_into_reketechuni_recent_10(df_chusan_recent_10, df_reketechuni_records)
         (
             df_reketechuni_profile,
