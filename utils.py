@@ -48,6 +48,8 @@ def get_score_to_reach_rating(rating_to_reach, constant):
         if 0 < max_achievable_rating_for_interval <= rating_to_reach:
             # if we cannot achieve that expected rating anymore it means the interval we were looking for was one before
             f2 = SCORE_RATING_FORMULA_LIST[i - 1][2]
+            if f2 is None:
+                return 1009000
             # get the inverse formula for that interval and calculate the score we need
             return int(f2(constant, rating_to_reach))
     return 1009000
